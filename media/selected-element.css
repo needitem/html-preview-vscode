@@ -1,0 +1,11 @@
+/* CSS for selected elements in HTML preview */
+
+.code-selected-element {
+    outline: 2px dashed #007ACC !important;
+    background-color: rgba(0, 122, 204, 0.1) !important;
+    transition: all 0.2s ease !important;
+}
+
+.code-selected-element:hover {
+    background-color: rgba(0, 122, 204, 0.2) !important;
+}

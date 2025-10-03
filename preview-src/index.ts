@@ -115,6 +115,65 @@ document.addEventListener('click', event => {
 	}
 }, true);
 
+// Element selection in preview -> focus corresponding source element
+document.addEventListener('click', (event: MouseEvent) => {
+    if (!event) {
+        return;
+    }
+
+    const isAnchorAncestor = (n: HTMLElement | null): boolean => {
+        for (let cur = n; cur; cur = cur.parentElement) {
+            if (cur.tagName === 'A') {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    const findCodeLineElement = (n: HTMLElement | null): HTMLElement | null => {
+        for (let cur = n; cur; cur = cur.parentElement) {
+            if (cur.hasAttribute('data-line') || cur.classList.contains('code-line')) {
+                return cur;
+            }
+        }
+        return null;
+    };
+
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+        return;
+    }
+
+    // Let dedicated link handler handle links
+    if (isAnchorAncestor(target)) {
+        return;
+    }
+
+    const el = findCodeLineElement(target);
+    if (!el) {
+        return;
+    }
+
+    // Apply selection highlight
+    const previous = document.querySelector('.code-selected-element') as HTMLElement | null;
+    if (previous && previous !== el) {
+        previous.classList.remove('code-selected-element');
+    }
+    el.classList.add('code-selected-element');
+
+    // Gather info for focus
+    const lineAttr = el.getAttribute('data-line');
+    const line = lineAttr ? parseInt(lineAttr, 10) : undefined;
+    const tag = el.tagName ? el.tagName.toLowerCase() : '';
+    const id = el.getAttribute('id') || undefined;
+    const classes = (el.getAttribute('class') || '')
+        .split(/\s+/)
+        .filter(c => c && c !== 'code-line' && c !== 'code-selected-element');
+    const className = classes.length ? classes[0] : undefined;
+
+    messaging.postCommand('_html.focusElement', [line, tag, className, id]);
+}, false);
+
 if (settings.scrollEditorWithPreview) {
 	window.addEventListener('scroll', throttle(() => {
 		if (scrollDisabled) {

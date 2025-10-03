@@ -82,6 +82,7 @@ export class HTMLContentProvider {
 					data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
 					data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
 					data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
+				<link rel="stylesheet" href="${this.extensionResourcePath('selected-element.css')}" type="text/css" media="screen">
 				<script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
 				<script src="${this.extensionResourcePath('index.js')}" nonce="${nonce}"></script>
 				${this.getStyles(sourceUri, config)}

@@ -1,6 +1,6 @@
 {
 	"displayName": "HTML Preview",
-	"description": "Provides ability to preview HTML documents.",
+	"description": "Preview HTML documents and click elements in the preview to focus the corresponding source code.",
 	"html.preview.doubleClickToSwitchToEditor.desc": "Double click in the html preview to switch to the editor.",
 	"html.preview.markEditorSelection.desc": "Mark the current editor selection in the html preview.",
 	"html.preview.scrollEditorWithPreview.desc": "When a html preview is scrolled, update the view of the editor.",
