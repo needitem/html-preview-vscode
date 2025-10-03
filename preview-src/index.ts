@@ -57,14 +57,16 @@ window.addEventListener('resize', () => {
 }, true);
 
 window.addEventListener('message', event => {
-	if (event.data.source !== settings.source) {
-		return;
-	}
+    if (event.data.source !== settings.source) {
+        return;
+    }
 
-	switch (event.data.type) {
-		case 'onDidChangeTextEditorSelection':
-			marker.onDidChangeTextEditorSelection(event.data.line);
-			break;
+    switch (event.data.type) {
+        case 'onDidChangeTextEditorSelection':
+            marker.onDidChangeTextEditorSelection(event.data.line);
+            // Also ensure the active selection is visible in the preview
+            onUpdateView(event.data.line, settings);
+            break;
 
 		case 'updateView':
 			onUpdateView(event.data.line, settings);
@@ -160,6 +162,12 @@ document.addEventListener('click', (event: MouseEvent) => {
         previous.classList.remove('code-selected-element');
     }
     el.classList.add('code-selected-element');
+    // Ensure the selected element is visible in the preview
+    try {
+        // Prevent the scroll listener from echoing back to the editor
+        scrollDisabled = true;
+        el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' });
+    } catch {}
 
     // Gather info for focus
     const lineAttr = el.getAttribute('data-line');
