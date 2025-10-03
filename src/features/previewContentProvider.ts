@@ -76,6 +76,29 @@ export class HTMLContentProvider {
 			`<${p1} ${p3} class="${p5} code-line" data-line="${i+1}" ${p6}`)
         ).join("\n");
         const $ = cheerio.load(parsedDoc);
+
+        // Rewrite local resource URLs in existing markup to webview-safe URIs
+        const rewriteHref = (href: string | undefined) => this.fixHref(sourceUri, href || '', webview);
+        const rewriteSrc = (src: string | undefined) => this.fixHref(sourceUri, src || '', webview);
+
+        $('link[href]').each((_, el) => {
+            const href = $(el).attr('href');
+            if (href && !/^https?:/i.test(href) && !/^data:/i.test(href)) {
+                $(el).attr('href', rewriteHref(href));
+            }
+        });
+        $('script[src]').each((_, el) => {
+            const src = $(el).attr('src');
+            if (src && !/^https?:/i.test(src) && !/^data:/i.test(src)) {
+                $(el).attr('src', rewriteSrc(src));
+            }
+        });
+        $('img[src]').each((_, el) => {
+            const src = $(el).attr('src');
+            if (src && !/^https?:/i.test(src) && !/^data:/i.test(src)) {
+                $(el).attr('src', rewriteSrc(src));
+            }
+        });
         const preJs = this.extensionResourcePath('pre.js', webview);
         const indexJs = this.extensionResourcePath('index.js', webview);
         const selCss = this.extensionResourcePath('selected-element.css', webview);

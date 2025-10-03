@@ -9,14 +9,14 @@
 	"readme": "README.md",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/tht13/html-preview-vscode"
+		"url": "https://github.com/needitem/html-preview-vscode"
 	},
 	"galleryBanner": {
 		"color": "#78d6f0",
 		"theme": "light"
 	},
-	"bugs": "https://github.com/tht13/html-preview-vscode/issues",
-	"homepage": "https://github.com/tht13/html-preview-vscode/blob/master/README.md",
+	"bugs": "https://github.com/needitem/html-preview-vscode/issues",
+	"homepage": "https://github.com/needitem/html-preview-vscode#readme",
 	"icon": "icon.png",
 	"main": "./out/extension.js",
 	"engines": {
