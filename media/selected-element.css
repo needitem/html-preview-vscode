@@ -9,3 +9,15 @@
 .code-selected-element:hover {
     background-color: rgba(0, 122, 204, 0.2) !important;
 }
+
+/* Highlight the element that corresponds to the active editor selection */
+.code-active-line {
+    outline: 2px solid rgba(0, 122, 204, 0.6) !important;
+    background-color: rgba(0, 122, 204, 0.08) !important;
+}
+
+/* When the user has markEditorSelection enabled, increase visibility */
+.vscode-body.showEditorSelection .code-active-line {
+    outline-width: 2px !important;
+    background-color: rgba(0, 122, 204, 0.15) !important;
+}
