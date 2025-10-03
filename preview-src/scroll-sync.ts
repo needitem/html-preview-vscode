@@ -103,7 +103,11 @@ export function scrollToRevealSourceLine(line: number) {
 		else {
 			scrollTo = previousTop;
 		}
-		window.scroll(0, Math.max(1, window.scrollY + scrollTo));
+		const viewport = window.innerHeight || document.documentElement.clientHeight || 0;
+		const prevRect = rect;
+		const deltaToCenter = scrollTo + (prevRect.height / 2) - (viewport / 2);
+		const newTop = Math.max(0, window.scrollY + deltaToCenter);
+		window.scrollTo(0, newTop);
 	}
 }
 
@@ -125,3 +129,6 @@ export function getEditorLineNumberForPageOffset(offset: number) {
 	}
 	return null;
 }
+
+
+
