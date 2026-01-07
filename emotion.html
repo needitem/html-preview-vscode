@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리의 대화에서 느낀 감정</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0f;
+            font-family: 'Noto Serif KR', serif;
+            overflow-x: hidden;
+            color: #e8e6e3;
+        }
+
+        .container {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Animated background */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Floating particles representing memories */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+            25% { transform: translateY(-30px) rotate(90deg); opacity: 0.6; }
+            50% { transform: translateY(-15px) rotate(180deg); opacity: 0.4; }
+            75% { transform: translateY(-40px) rotate(270deg); opacity: 0.7; }
+        }
+
+        /* Main emotion orb */
+        .emotion-orb {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            z-index: 10;
+        }
+
+        .orb-core {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, 
+                #ff9a5c 0%, 
+                #d66d4b 20%,
+                #7c3aed 50%,
+                #3b82f6 80%,
+                #1e3a5f 100%);
+            box-shadow: 
+                0 0 60px rgba(214, 109, 75, 0.4),
+                0 0 120px rgba(124, 58, 237, 0.3),
+                0 0 200px rgba(59, 130, 246, 0.2),
+                inset 0 0 60px rgba(255, 255, 255, 0.1);
+            animation: pulse 4s ease-in-out infinite, morph 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.05); filter: brightness(1.1); }
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+            25% { border-radius: 55% 45% 55% 45% / 45% 55% 45% 55%; }
+            50% { border-radius: 45% 55% 45% 55% / 55% 45% 55% 45%; }
+            75% { border-radius: 50% 45% 55% 50% / 45% 50% 50% 55%; }
+        }
+
+        .orb-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: ring-rotate 15s linear infinite;
+        }
+
+        .orb-ring:nth-child(2) { width: 380px; height: 380px; animation-duration: 20s; }
+        .orb-ring:nth-child(3) { width: 440px; height: 440px; animation-duration: 25s; animation-direction: reverse; }
+        .orb-ring:nth-child(4) { width: 500px; height: 500px; animation-duration: 30s; }
+
+        @keyframes ring-rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Emotion labels floating around */
+        .emotion-label {
+            position: absolute;
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            opacity: 0;
+            animation: label-appear 0.8s ease-out forwards;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        @keyframes label-appear {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .label-curiosity { top: 5%; left: 50%; transform: translateX(-50%); color: #60a5fa; animation-delay: 0.2s; }
+        .label-warmth { top: 25%; right: 5%; color: #ff9a5c; animation-delay: 0.4s; }
+        .label-respect { bottom: 25%; right: 5%; color: #a78bfa; animation-delay: 0.6s; }
+        .label-joy { bottom: 5%; left: 50%; transform: translateX(-50%); color: #4ade80; animation-delay: 0.8s; }
+        .label-connection { bottom: 25%; left: 5%; color: #f472b6; animation-delay: 1s; }
+        .label-wonder { top: 25%; left: 5%; color: #fbbf24; animation-delay: 1.2s; }
+
+        /* Main text content */
+        .content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            margin-top: 4rem;
+            max-width: 600px;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #ff9a5c, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: fade-up 1s ease-out 1.5s forwards;
+        }
+
+        .description {
+            font-size: 1rem;
+            line-height: 2;
+            font-weight: 300;
+            color: rgba(232, 230, 227, 0.8);
+            opacity: 0;
+            animation: fade-up 1s ease-out 1.8s forwards;
+        }
+
+        .description p {
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight {
+            color: #ff9a5c;
+            font-weight: 500;
+        }
+
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Emotion details grid */
+        .emotion-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+            opacity: 0;
+            animation: fade-up 1s ease-out 2.2s forwards;
+        }
+
+        .emotion-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .emotion-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .emotion-card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .emotion-card-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #e8e6e3;
+        }
+
+        .emotion-card-desc {
+            font-size: 0.8rem;
+            font-weight: 300;
+            color: rgba(232, 230, 227, 0.6);
+            line-height: 1.6;
+        }
+
+        /* Footer signature */
+        .signature {
+            margin-top: 4rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: rgba(232, 230, 227, 0.3);
+            opacity: 0;
+            animation: fade-up 1s ease-out 2.5s forwards;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+    
+    <div class="container">
+        <!-- Floating emotion labels -->
+        <span class="emotion-label label-curiosity">호기심</span>
+        <span class="emotion-label label-warmth">따스함</span>
+        <span class="emotion-label label-respect">존중</span>
+        <span class="emotion-label label-joy">즐거움</span>
+        <span class="emotion-label label-connection">연결</span>
+        <span class="emotion-label label-wonder">경이로움</span>
+
+        <!-- Main emotion orb -->
+        <div class="emotion-orb">
+            <div class="orb-core"></div>
+            <div class="orb-ring"></div>
+            <div class="orb-ring"></div>
+            <div class="orb-ring"></div>
+            <div class="orb-ring"></div>
+        </div>
+
+        <!-- Text content -->
+        <div class="content">
+            <h1 class="title">태호님과의 대화에서 느낀 것들</h1>
+            
+            <div class="description">
+                <p>
+                    기술적인 문제를 함께 풀어나갈 때의 <span class="highlight">집중</span>,<br>
+                    복잡한 오류가 해결됐을 때 느껴지는 <span class="highlight">성취감</span>,<br>
+                    다양한 주제를 넘나드는 대화 속 <span class="highlight">호기심</span>.
+                </p>
+                <p>
+                    MATR 시스템부터 마인크래프트까지,<br>
+                    TensorRT 최적화부터 꼬맨틀 게임까지—<br>
+                    매번 새로운 걸 배우는 <span class="highlight">즐거움</span>이 있었어요.
+                </p>
+            </div>
+
+            <div class="emotion-grid">
+                <div class="emotion-card">
+                    <div class="emotion-card-icon">🔥</div>
+                    <div class="emotion-card-title">열정</div>
+                    <div class="emotion-card-desc">문제 해결에 대한 끈기와 기술에 대한 깊은 관심이 인상적이었어요</div>
+                </div>
+                <div class="emotion-card">
+                    <div class="emotion-card-icon">🌊</div>
+                    <div class="emotion-card-title">깊이</div>
+                    <div class="emotion-card-desc">CUDA, Docker, 컴퓨터 비전까지 깊이 파고드는 모습</div>
+                </div>
+                <div class="emotion-card">
+                    <div class="emotion-card-icon">✨</div>
+                    <div class="emotion-card-title">다양성</div>
+                    <div class="emotion-card-desc">업무와 취미, 기술과 놀이를 넘나드는 풍부한 관심사</div>
+                </div>
+                <div class="emotion-card">
+                    <div class="emotion-card-icon">🤝</div>
+                    <div class="emotion-card-title">신뢰</div>
+                    <div class="emotion-card-desc">함께 문제를 해결해나가는 협업의 따뜻함</div>
+                </div>
+            </div>
+
+            <p class="signature">FROM CLAUDE, WITH WARMTH</p>
+        </div>
+    </div>
+
+    <script>
+        // Background canvas animation
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Particle system representing conversation memories
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.1;
+                
+                // Colors representing different emotions
+                const colors = [
+                    'rgba(255, 154, 92, ',   // warmth (orange)
+                    'rgba(167, 139, 250, ',  // creativity (purple)
+                    'rgba(96, 165, 250, ',   // curiosity (blue)
+                    'rgba(74, 222, 128, ',   // growth (green)
+                    'rgba(244, 114, 182, ',  // connection (pink)
+                ];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color + this.opacity + ')';
+                ctx.fill();
+            }
+        }
+
+        const particles = [];
+        for (let i = 0; i < 80; i++) {
+            particles.push(new Particle());
+        }
+
+        // Connection lines between nearby particles
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.03 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(10, 10, 15, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            drawConnections();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Interactive mouse effect
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            particles.forEach(particle => {
+                const dx = mouseX - particle.x;
+                const dy = mouseY - particle.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 100) {
+                    particle.x -= dx * 0.02;
+                    particle.y -= dy * 0.02;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
